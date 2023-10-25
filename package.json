@@ -3,5 +3,8 @@
     "backstopjs": "^6.2.2",
     "sync-fetch": "^0.5.2"
   },
-  "packageManager": "yarn@4.0.0"
+  "packageManager": "yarn@4.0.0",
+  "scripts": {
+    "run": "backstop reference --config=content-migration.js && backstop test --config=content-migration.js"
+  }
 }

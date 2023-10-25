@@ -6,6 +6,7 @@
   },
   "packageManager": "yarn@4.0.0",
   "scripts": {
-    "run": "backstop reference --config=content-migration.js && backstop test --config=content-migration.js"
+    "generate-reference": "backstop reference --config=content-migration.js",
+    "run-test": "backstop test --config=content-migration.js"
   }
 }

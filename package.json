@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "backstopjs": "^6.2.2",
+    "sync-fetch": "^0.5.2"
+  },
+  "packageManager": "yarn@4.0.0"
+}

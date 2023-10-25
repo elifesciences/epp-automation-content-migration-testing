@@ -9,8 +9,8 @@ const config = {
       height: 900
     }
   ],
-  onBeforeScript: 'playwright/onBefore.js',
-  onReadyScript: 'playwright/onReady.js',
+  // onBeforeScript: 'playwright/onBefore.js',
+  // onReadyScript: 'playwright/onReady.js',
   scenarios: [],
   paths: {
     bitmaps_reference: 'backstop_data/bitmaps_reference',

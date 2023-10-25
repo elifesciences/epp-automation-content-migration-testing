@@ -4,16 +4,6 @@ const config = {
   id: 'enhanced_article',
   viewports: [
     {
-      label: 'phone',
-      width: 320,
-      height: 480
-    },
-    {
-      label: 'tablet',
-      width: 1024,
-      height: 768
-    },
-    {
       label: 'desktop',
       width: 1440,
       height: 900

@@ -1868,7 +1868,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright@npm:^1.32.1":
+"playwright@npm:^1.32.1, playwright@npm:^1.39.0":
   version: 1.39.0
   resolution: "playwright@npm:1.39.0"
   dependencies:
@@ -2084,6 +2084,7 @@ __metadata:
   resolution: "root-workspace-0b6124@workspace:."
   dependencies:
     backstopjs: "npm:^6.2.2"
+    playwright: "npm:^1.39.0"
     sync-fetch: "npm:^0.5.2"
   languageName: unknown
   linkType: soft

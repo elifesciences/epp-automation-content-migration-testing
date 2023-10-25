@@ -23,6 +23,8 @@ jobs:
           cache: yarn
       - name: yarn install
         run: yarn
+      - name: install browsers
+        run: yarn playwright install
       - name: Run backstop reference
         run: yarn backstop reference --config=content-migration.js
       - name: Create Pull Request (master)

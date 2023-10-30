@@ -7,7 +7,7 @@ env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
-  update-references:
+  run-test:
     runs-on: ubuntu-latest
 
     steps:
@@ -25,8 +25,8 @@ jobs:
         run: yarn
       - name: install browsers
         run: yarn playwright install
-      - name: Run backstop reference
-        run: yarn backstop reference --config=content-migration.js
+      - name: Run backstop test
+        run: yarn backstop test --config=content-migration.js
       - name: Playwright report upload
         uses: actions/upload-artifact@v3
         if: always()

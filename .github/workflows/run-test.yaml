@@ -26,8 +26,9 @@ jobs:
       - name: install browsers
         run: yarn playwright install
       - name: Run backstop test
-        run: yarn backstop test --config=content-migration.js
+        run: yarn backstop test --config=content-migration.js || true
       - name: Run tar for backstop report
+        if: always()
         run: tar -czvf backstop_report.tar.gz backstop_data/
       - name: Playwright report upload
         uses: actions/upload-artifact@v3

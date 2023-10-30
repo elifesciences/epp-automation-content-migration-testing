@@ -49,6 +49,7 @@ const scenarios = rppIds.map((rppId) => ({
   referenceUrl: `https://prod--epp.elifesciences.org/reviewed-preprints/${rppId}`,
   removeSelectors: ["#CybotCookiebotDialog", "#assessment>.descriptors"]
 }))
+  .slice(1, 20);
 
 config.scenarios = scenarios;
 

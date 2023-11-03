@@ -1,4 +1,5 @@
 const syncFetch = require("sync-fetch");
+const fs = require('fs');
 
 const config = {
   id: 'enhanced_article',
@@ -35,9 +36,12 @@ const config = {
 
 
 const fetchAndParseManuscripts = () => {
-  const manuscriptsJson = syncFetch('https://raw.githubusercontent.com/elifesciences/enhanced-preprints-client/master/manuscripts.json');
-  const manuscripts = manuscriptsJson.json();
-  return manuscripts;
+  try {
+    return JSON.parse(fs.readFileSync('manuscripts.json', 'utf8'));
+  } catch (err) {
+    const manuscriptsJson = syncFetch('https://raw.githubusercontent.com/elifesciences/enhanced-preprints-client/master/manuscripts.json');
+    return manuscriptsJson.json();
+  }
 }
 
 const manuscripts = fetchAndParseManuscripts();

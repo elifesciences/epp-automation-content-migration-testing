@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "backstopjs": "^6.2.2",
+    "fs": "^0.0.1-security",
     "playwright": "^1.39.0",
     "sync-fetch": "^0.5.2"
   },

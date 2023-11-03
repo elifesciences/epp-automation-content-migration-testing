@@ -1,5 +1,5 @@
 const syncFetch = require('sync-fetch');
-const { readFileSync} = require('fs');
+const { readFileSync } = require('fs');
 
 const config = {
   id: 'enhanced_article',

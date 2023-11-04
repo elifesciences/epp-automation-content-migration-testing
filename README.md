@@ -25,3 +25,9 @@ To reduce the feedback loop and if you want to focus on specific manuscripts the
   }
 }
 ```
+
+To simply monitor whether the expected manuscripts are available without performing a visual comparison:
+
+```shell
+yarn content-status
+```

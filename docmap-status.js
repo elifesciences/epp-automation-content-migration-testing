@@ -17,7 +17,7 @@ const check = (url) => {
 
 const checkSections = (url) => ({
   path: url,
-  results: ['', '/figures', '/reviews']
+  results: ['']
     .map((sub) => ({
       subpath: sub,
       result: check(`${url}${sub}`),
@@ -25,7 +25,7 @@ const checkSections = (url) => ({
 });
 
 const manuscripts = fetchAndParseManuscripts();
-const rppIds = Object.keys(manuscripts);
+const rppIds = Object.keys(manuscripts).filter((id) => /^[0-9]+$/.test(id));
 
 // Function to chunk an array into smaller arrays of a specified size
 function chunkArray(array, size) {
@@ -44,7 +44,7 @@ const batches = chunkArray(rppIds, 10);
 // Process each batch
 batches.forEach((batch, i) => {
   const scenarios = batch
-    .map((rppId) =>( { id: rppId, ...checkSections(`https://prod-automation--epp.elifesciences.org/reviewed-preprints/${rppId}`) }));
+    .map((rppId) =>( { id: rppId, ...checkSections(`https://data-hub-api.elifesciences.org/enhanced-preprints/docmaps/v2/by-publisher/elife/get-by-manuscript-id?manuscript_id=${rppId}`) }));
 
   const organise = () => {
     const ok = scenarios.filter((scenario) => scenario.results.every((result) => result.result));

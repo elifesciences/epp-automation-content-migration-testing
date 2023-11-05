@@ -8,6 +8,7 @@
   "packageManager": "yarn@4.0.0",
   "scripts": {
     "content-status": "node content-status.js",
+    "docmap-status": "node docmap-status.js",
     "generate-reference": "backstop reference --config=content-migration.js",
     "run-test": "backstop test --config=content-migration.js"
   }

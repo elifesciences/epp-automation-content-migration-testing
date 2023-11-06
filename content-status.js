@@ -24,6 +24,16 @@ const checkSections = (url) => ({
     })),
 });
 
+const checkPublished = (rppId) => {
+  const response = syncFetch(`https://prod--epp.elifesciences.org/api/preprints/${rppId}`)
+  if (!response.ok) {
+    return `request failed: ${response.status}: ${response.text()}`;
+  }
+
+  const articleJson = response.json();
+  return articleJson.article.published;
+}
+
 const manuscripts = fetchAndParseManuscripts();
 const rppIds = Object.keys(manuscripts);
 
@@ -44,7 +54,7 @@ const batches = chunkArray(rppIds, 10);
 // Process each batch
 batches.forEach((batch, i) => {
   const scenarios = batch
-    .map((rppId) =>( { id: rppId, ...checkSections(`https://prod-automation--epp.elifesciences.org/reviewed-preprints/${rppId}`) }));
+    .map((rppId) =>( { id: rppId, published: checkPublished(rppId), ...checkSections(`https://prod-automation--epp.elifesciences.org/reviewed-preprints/${rppId}`) }));
 
   const organise = () => {
     const ok = scenarios.filter((scenario) => scenario.results.every((result) => result.result));
@@ -54,7 +64,7 @@ batches.forEach((batch, i) => {
       ok: ok.length,
       success: ok.map((i) => i.id).join(','),
       error: error.length,
-      log: error.length > 0 ? JSON.stringify(error) : ''
+      log: error.length > 0 ? JSON.stringify(error, null, 4) : ''
     }
   };
 

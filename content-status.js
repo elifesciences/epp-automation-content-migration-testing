@@ -25,7 +25,7 @@ const checkSections = (url) => ({
 });
 
 const checkPublished = (rppId) => {
-  const response = syncFetch(`https://prod--epp.elifesciences.org/api/preprints/${rppId}`)
+  const response = syncFetch(`https://staging--epp.elifesciences.org/api/preprints/${rppId}`);
   if (!response.ok) {
     return `request failed: ${response.status}: ${response.text()}`;
   }
@@ -54,7 +54,7 @@ const batches = chunkArray(rppIds, 10);
 // Process each batch
 batches.forEach((batch, i) => {
   const scenarios = batch
-    .map((rppId) =>( { id: rppId, published: checkPublished(rppId), ...checkSections(`https://prod-automation--epp.elifesciences.org/reviewed-preprints/${rppId}`) }));
+    .map((rppId) =>( { id: rppId, published: checkPublished(rppId), ...checkSections(`https://staging--epp.elifesciences.org/reviewed-preprints/${rppId}`) }));
 
   const organise = () => {
     const ok = scenarios.filter((scenario) => scenario.results.every((result) => result.result));

@@ -48,7 +48,7 @@ const rppIds = Object.keys(manuscripts);
 const scenarios = rppIds.slice(0, 20)
   .map((rppId) => ({
     label: `Enhanced Article ${rppId}`,
-    url: `https://prod-automation--epp.elifesciences.org/reviewed-preprints/${rppId}`,
+    url: `https://staging--epp.elifesciences.org/reviewed-preprints/${rppId}`,
     referenceUrl: `https://prod--epp.elifesciences.org/reviewed-preprints/${rppId}`,
     removeSelectors: ["#CybotCookiebotDialog", "#assessment>.descriptors"]
   }));

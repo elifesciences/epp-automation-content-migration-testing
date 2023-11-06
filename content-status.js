@@ -64,9 +64,9 @@ batches.forEach((batch, i) => {
       ok: ok.length,
       success: ok.map((i) => i.id).join(','),
       error: error.length,
-      log: error.length > 0 ? JSON.stringify(error, null, 4) : ''
+      log: error,
     }
   };
 
-  console.log(`Batch ${i + 1} of ${batches.length}:`, organise());
+  console.log(`Batch ${i + 1} of ${batches.length}:`, JSON.stringify(organise(), null, 2));
 });

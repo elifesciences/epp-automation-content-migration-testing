@@ -34,6 +34,15 @@ const checkPublished = (rppId) => {
   return articleJson.article.published;
 }
 
+const checkContent = (msid) => {
+  const response = syncFetch(`http://data-hub-api.elifesciences.org/enhanced-preprints/docmaps/v2/by-publisher/elife/get-by-manuscript-id\?manuscript_id\=${msid}`);
+  const text = response.text();
+
+  const contentPresent = text.includes('s3://');
+
+  return { id: msid, contentPresent };
+}
+
 const manuscripts = fetchAndParseManuscripts();
 const rppIds = Object.keys(manuscripts);
 
@@ -70,3 +79,12 @@ batches.forEach((batch, i) => {
 
   console.log(`Batch ${i + 1} of ${batches.length}:`, JSON.stringify(organise(), null, 2));
 });
+
+// batches.map((batch) => {
+//   const batchResult = batch
+//     .filter(msid => !msid.includes('v'))
+//     .map(checkContent)
+//     .filter(result => !result.contentPresent);
+//
+//   console.log(batchResult);
+// })

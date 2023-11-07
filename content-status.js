@@ -10,35 +10,35 @@ const fetchAndParseManuscripts = () => {
   }
 }
 
-const check = (url) => {
-  const response = syncFetch(url);
+const check = async (url) => {
+  const response = await fetch(url);
   return response.ok;
 };
 
-const checkSections = (url) => ({
+const checkSections = async (url) => ({
   path: url,
-  results: ['', '/figures', '/reviews']
-    .map((sub) => ({
+  results: await Promise.all(
+    ['', '/figures', '/reviews']
+    .map(async (sub) => ({
       subpath: sub,
-      result: check(`${url}${sub}`),
-    })),
+      result: await check(`${url}${sub}`),
+    }))
+  ),
 });
 
-const checkPublished = (rppId) => {
-  const response = syncFetch(`https://staging--epp.elifesciences.org/api/preprints/${rppId}`);
+const checkPublished = async (rppId) => {
+  const response = await fetch(`https://prod--epp.elifesciences.org/api/preprints/${rppId}`);
   if (!response.ok) {
-    return `request failed: ${response.status}: ${response.text()}`;
+    return `request failed: ${response.status}: ${await response.text()}`;
   }
 
   const articleJson = response.json();
-  return articleJson.article.published;
+  return articleJson?.article?.published ?? null;
 }
 
-const manuscripts = fetchAndParseManuscripts();
-const rppIds = Object.keys(manuscripts);
 
 // Function to chunk an array into smaller arrays of a specified size
-function chunkArray(array, size) {
+const chunkArray = (array, size) => {
   const chunked = [];
   let index = 0;
   while (index < array.length) {
@@ -48,25 +48,33 @@ function chunkArray(array, size) {
   return chunked;
 }
 
-// Chunk rppIds into batches of 20
-const batches = chunkArray(rppIds, 10);
+const batchAndCheck = async (rppIds, batchSize) => {
+  // Chunk rppIds into batches of 20
+  const batches = chunkArray(rppIds, batchSize);
 
-// Process each batch
-batches.forEach((batch, i) => {
-  const scenarios = batch
-    .map((rppId) =>( { id: rppId, published: checkPublished(rppId), ...checkSections(`https://staging--epp.elifesciences.org/reviewed-preprints/${rppId}`) }));
+  // Process each batch
+  for (const i in batches) {
+    const batch = batches[i];
+    const scenarios = await Promise.all(batch
+      .map(async (rppId) => ({ id: rppId, published: await checkPublished(rppId), ...(await checkSections(`https://prod-automation--epp.elifesciences.org/reviewed-preprints/${rppId}`)) })));
 
-  const organise = () => {
-    const ok = scenarios.filter((scenario) => scenario.results.every((result) => result.result));
-    const error = scenarios.filter((scenario) => scenario.results.some((result) => !result.result));
+    const organise = () => {
+      const ok = scenarios.filter((scenario) => scenario.results.every((result) => result.result));
+      const error = scenarios.filter((scenario) => scenario.results.some((result) => !result.result));
 
-    return {
-      ok: ok.length,
-      success: ok.map((i) => i.id).join(','),
-      error: error.length,
-      log: error,
-    }
-  };
+      return {
+        ok: ok.length,
+        success: ok.map((i) => i.id).join(','),
+        error: error.length,
+        log: error,
+      }
+    };
 
-  console.log(`Batch ${i + 1} of ${batches.length}:`, JSON.stringify(organise(), null, 2));
-});
+    console.log(`Batch ${parseInt(i) + 1} of ${batches.length}:`, JSON.stringify(organise(), null, 2));
+  }
+}
+
+
+const manuscripts = fetchAndParseManuscripts();
+const rppIds = Object.keys(manuscripts);
+batchAndCheck(rppIds, 10);

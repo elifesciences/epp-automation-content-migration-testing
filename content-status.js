@@ -27,7 +27,7 @@ const checkSections = async (url) => ({
 });
 
 const checkPublished = async (rppId) => {
-  const response = await fetch(`https://prod--epp.elifesciences.org/api/preprints/${rppId}`);
+  const response = await fetch(`https://staging--epp.elifesciences.org/api/preprints/${rppId}`);
   if (!response.ok) {
     return `request failed: ${response.status}: ${await response.text()}`;
   }
@@ -56,7 +56,7 @@ const batchAndCheck = async (rppIds, batchSize) => {
   for (const i in batches) {
     const batch = batches[i];
     const scenarios = await Promise.all(batch
-      .map(async (rppId) => ({ id: rppId, published: await checkPublished(rppId), ...(await checkSections(`https://prod-automation--epp.elifesciences.org/reviewed-preprints/${rppId}`)) })));
+      .map(async (rppId) => ({ id: rppId, published: await checkPublished(rppId), ...(await checkSections(`https://staging--epp.elifesciences.org/reviewed-preprints/${rppId}`)) })));
 
     const organise = () => {
       const ok = scenarios.filter((scenario) => scenario.results.every((result) => result.result));

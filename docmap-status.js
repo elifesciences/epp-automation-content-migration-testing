@@ -33,9 +33,8 @@ const checkSections = (rppId) => {
 
 const manuscripts = fetchAndParseManuscripts();
 const rppIds = Object.keys(manuscripts);
-console.log(rppIds);
 
-const latestVersions2 = rppIds
+const latestVersions = rppIds
   .filter(id => id.includes('v'))
   .sort()
   .reduce((acc, rppId) => {
@@ -46,7 +45,7 @@ const latestVersions2 = rppIds
       const previous = acc.pop();
       const [prevId,] = previous.split('v');
       if (prevId === id) {
-        acc.push(rppId); 
+        acc.push(rppId);
       } else {
         acc.push(previous, rppId)
       }
@@ -65,13 +64,13 @@ function chunkArray(array, size) {
   return chunked;
 }
 
-// Chunk rppIds into batches of 20
-const batches = chunkArray(rppIds, 10);
+// Chunk rppIds into batches of 10
+const batches = chunkArray(latestVersions, 10);
 
 // Process each batch
 batches.forEach((batch, i) => {
   const scenarios = batch
     .map((rppId) =>( { id: rppId, ...checkSections(rppId) }));
 
-  console.log(`Batch ${i + 1} of ${batches.length}:`, JSON.stringify(scenarios, null, 2));
+  console.log(`Batch ${i + 1} of ${batches.length}:`, JSON.stringify(scenarios.filter((scenario) => scenario.result.mismatch || scenario.result.diff !== 0), null, 2));
 });

@@ -34,13 +34,11 @@ const checkPublished = (rppId) => {
   return articleJson.article.published;
 }
 
-const checkContent = (msid) => {
-  const response = syncFetch(`http://data-hub-api.elifesciences.org/enhanced-preprints/docmaps/v2/by-publisher/elife/get-by-manuscript-id\?manuscript_id\=${msid}`);
-  const text = response.text();
-
-  const contentPresent = text.includes('s3://');
-
-  return { id: msid, contentPresent };
+const checkContent = (msid, version) => {
+  const response = syncFetch(`https://data-hub-api.elifesciences.org/enhanced-preprints/docmaps/v2/by-publisher/elife/get-by-manuscript-id?manuscript_id=${msid}`);
+  const found = response.text().match(/s3:\/\/[^"]+/g) ?? [];
+  const unique = new Set(found).size;
+  return { total: found.length, unique, ...(version > 0 ? { mismatch: (version > unique) } : {}) };
 }
 
 const manuscripts = fetchAndParseManuscripts();
@@ -63,7 +61,7 @@ const batches = chunkArray(rppIds, 10);
 // Process each batch
 batches.forEach((batch, i) => {
   const scenarios = batch
-    .map((rppId) =>( { id: rppId, published: checkPublished(rppId), ...checkSections(`https://staging--epp.elifesciences.org/reviewed-preprints/${rppId}`) }));
+    .map((rppId) =>( { id: rppId, published: checkPublished(rppId), content: checkContent(rppId.match(/^\d+/)[0], rppId.includes('v') ? Number(rppId.match(/\d$/)[0]) : 0), ...checkSections(`https://staging--epp.elifesciences.org/reviewed-preprints/${rppId}`) }));
 
   const organise = () => {
     const ok = scenarios.filter((scenario) => scenario.results.every((result) => result.result));
@@ -79,12 +77,3 @@ batches.forEach((batch, i) => {
 
   console.log(`Batch ${i + 1} of ${batches.length}:`, JSON.stringify(organise(), null, 2));
 });
-
-// batches.map((batch) => {
-//   const batchResult = batch
-//     .filter(msid => !msid.includes('v'))
-//     .map(checkContent)
-//     .filter(result => !result.contentPresent);
-//
-//   console.log(batchResult);
-// })

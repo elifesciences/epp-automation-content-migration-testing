@@ -67,10 +67,22 @@ function chunkArray(array, size) {
 // Chunk rppIds into batches of 10
 const batches = chunkArray(latestVersions, 10);
 
+
+
 // Process each batch
 batches.forEach((batch, i) => {
   const scenarios = batch
     .map((rppId) =>( { id: rppId, ...checkSections(rppId) }));
 
-  console.log(`Batch ${i + 1} of ${batches.length}:`, JSON.stringify(scenarios.filter((scenario) => scenario.result.mismatch || scenario.result.diff !== 0), null, 2));
+  if (i === 0) {
+    console.log('[');
+  }
+
+  scenarios.filter((scenario) => scenario.result.mismatch || scenario.result.diff !== 0).forEach((scenario, j) => {
+    console.log(`${JSON.stringify(scenario, null, 2)}${i + j + 2 < batches.length + scenarios.length ? ',' : ''}`);
+  });
+
+  if (i + 1 === batches.length) {
+    console.log(']');
+  }
 });

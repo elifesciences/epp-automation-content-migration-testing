@@ -35,6 +35,25 @@ const manuscripts = fetchAndParseManuscripts();
 const rppIds = Object.keys(manuscripts);
 console.log(rppIds);
 
+const latestVersions2 = rppIds
+  .filter(id => id.includes('v'))
+  .sort()
+  .reduce((acc, rppId) => {
+    const [id,] = rppId.split('v');
+    if (!acc.length) {
+      acc.push(rppId);
+    } else {
+      const previous = acc.pop();
+      const [prevId,] = previous.split('v');
+      if (prevId === id) {
+        acc.push(rppId); 
+      } else {
+        acc.push(previous, rppId)
+      }
+    }
+    return acc;
+  }, []);
+
 // Function to chunk an array into smaller arrays of a specified size
 function chunkArray(array, size) {
   const chunked = [];

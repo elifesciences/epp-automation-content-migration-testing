@@ -10,31 +10,73 @@ const fetchAndParseManuscripts = () => {
   }
 }
 
-const check = async (url) => {
+const responseIsOK = async (url, id = '') => {
   const response = await fetch(url);
-  return response.ok;
+  return {
+    id: `checkResponseIsOK-${id}`,
+    url,
+    result: response.ok
+  };
 };
 
-const checkSections = async (url) => ({
-  path: url,
-  results: await Promise.all(
-    ['', '/figures', '/reviews']
-    .map(async (sub) => ({
-      subpath: sub,
-      result: await check(`${url}${sub}`),
-    }))
-  ),
-});
-
-const checkPublished = async (rppId) => {
-  const response = await fetch(`https://staging--epp.elifesciences.org/api/preprints/${rppId}`);
-  if (!response.ok) {
-    return `request failed: ${response.status}: ${await response.text()}`;
+const checkDocmapApi = async (scenario) => {
+  // skip versioned scenarios
+  if (scenario.id.includes('v')) {
+    return scenario;
   }
-
-  const articleJson = response.json();
-  return articleJson?.article?.published ?? null;
+  const url = `https://data-hub-api.elifesciences.org/enhanced-preprints/docmaps/v2/by-publisher/elife/get-by-manuscript-id?manuscript_id=${scenario.id}`;
+  const response = await fetch(url);
+  const docmap = await response.text();
+  return {
+    ...scenario,
+    results: [
+      ...scenario.results,
+      {
+        id: 'checkDocmapContainsS3Path',
+        url,
+        result: docmap.includes('s3://'),
+      }
+    ]
+  };
 }
+
+const checkBasicUrls = async (scenario) => ({
+  ...scenario,
+  results: [
+    ...scenario.results,
+    ...await Promise.all(
+      [
+        [`https://staging--epp.elifesciences.org/reviewed-preprints/${scenario.id}`, 'MainPage'],
+        [`https://staging--epp.elifesciences.org/reviewed-preprints/${scenario.id}/figures`, 'FiguresPage'],
+        [`https://staging--epp.elifesciences.org/reviewed-preprints/${scenario.id}/reviews`, 'ReviewsPage'],
+        [`https://staging--epp.elifesciences.org/api/preprints/${scenario.id}`, 'API'],
+      ].map((urlCheckData) => responseIsOK(...urlCheckData)),
+    ),
+  ]
+})
+
+const checkAPI = async (scenario) => {
+  const url = `https://staging--epp.elifesciences.org/api/preprints/${scenario.id}`;
+  const response = await fetch(url);
+
+  return {
+    ...scenario,
+    results: [
+      ...scenario.results,
+      response.ok ? {
+          id: 'checkPublishedDate',
+          url,
+          result: true,
+          publishedDate: response.json().article?.published ?? null,
+        } : {
+          id: 'checkPublishedDate',
+          url,
+          result: false,
+          message: `request failed: ${response.status}: ${await response.text()}`
+        },
+    ]
+  };
+};
 
 
 // Function to chunk an array into smaller arrays of a specified size
@@ -55,22 +97,26 @@ const batchAndCheck = async (rppIds, batchSize) => {
   // Process each batch
   for (const i in batches) {
     const batch = batches[i];
-    const scenarios = await Promise.all(batch
-      .map(async (rppId) => ({ id: rppId, published: await checkPublished(rppId), ...(await checkSections(`https://staging--epp.elifesciences.org/reviewed-preprints/${rppId}`)) })));
+    const scenarios = batch.map((rppId) => ({ id: rppId, results: []}));
+    const checkedScenarios = await Promise.all(scenarios.map(checkBasicUrls));
 
-    const organise = () => {
-      const ok = scenarios.filter((scenario) => scenario.results.every((result) => result.result));
-      const error = scenarios.filter((scenario) => scenario.results.some((result) => !result.result));
+    const ok = checkedScenarios.filter((scenario) => scenario.results.every((result) => result.result));
+    const error = checkedScenarios.filter((scenario) => scenario.results.some((result) => !result.result));
 
-      return {
-        ok: ok.length,
-        success: ok.map((i) => i.id).join(','),
-        error: error.length,
-        log: error,
-      }
-    };
+    const enhancedFailedScenarios = await Promise.all(error.map(async (scenario) => {
+      return checkAPI(scenario)
+        .then(checkDocmapApi);
+    }));
 
-    console.log(`Batch ${parseInt(i) + 1} of ${batches.length}:`, JSON.stringify(organise(), null, 2));
+    const output = JSON.stringify({
+      batchId: `Batch ${parseInt(i) + 1} of ${batches.length}`,
+      ok: ok.length,
+      success: ok.map((i) => i.id).join(','),
+      error: enhancedFailedScenarios.length,
+      log: enhancedFailedScenarios,
+    }, null, 2);
+
+    console.log(output);
   }
 }
 

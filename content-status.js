@@ -78,7 +78,6 @@ const checkAPI = async (scenario) => {
   };
 };
 
-
 // Function to chunk an array into smaller arrays of a specified size
 const chunkArray = (array, size) => {
   const chunked = [];

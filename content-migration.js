@@ -49,18 +49,13 @@ try {
   const excludes = JSON.parse(readFileSync('excludes.json', 'utf8'));
   
   if (excludes.length) {
-    rppIds = rppIds.reduce((acc, id) => {
-      if (excludes.includes(id)) {
-        acc.push(id);
-      }
-      return acc;
-    }
-    , []);
+    rppIds = rppIds.filter((id) => !excludes.includes(id));
   }
 }
  catch (e) {
   console.log('no excludes found');
 }
+console.log(JSON.stringify(rppIds.slice(0, 20)));
 
 const scenarios = rppIds.slice(0, 20)
   .map((rppId) => ({

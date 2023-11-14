@@ -43,7 +43,24 @@ const fetchAndParseManuscripts = () => {
 }
 
 const manuscripts = fetchAndParseManuscripts();
-const rppIds = Object.keys(manuscripts);
+let rppIds = Object.keys(manuscripts);
+
+try {
+  const excludes = JSON.parse(readFileSync('excludes.json', 'utf8'));
+  
+  if (excludes.length) {
+    rppIds = rppIds.reduce((acc, id) => {
+      if (excludes.includes(id)) {
+        acc.push(id);
+      }
+      return acc;
+    }
+    , []);
+  }
+}
+ catch (e) {
+  console.log('no excludes found');
+}
 
 const scenarios = rppIds.slice(0, 20)
   .map((rppId) => ({

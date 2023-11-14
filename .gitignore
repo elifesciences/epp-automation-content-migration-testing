@@ -1,3 +1,4 @@
 node_modules/
 manuscripts.json
+excludes.json
 backstop_data/

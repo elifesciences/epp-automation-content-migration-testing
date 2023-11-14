@@ -55,7 +55,6 @@ try {
  catch (e) {
   console.log('no excludes found');
 }
-console.log(JSON.stringify(rppIds.slice(0, 20)));
 
 const scenarios = rppIds.slice(0, 20)
   .map((rppId) => ({

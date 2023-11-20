@@ -47,7 +47,7 @@ let rppIds = Object.keys(manuscripts);
 
 try {
   const excludes = JSON.parse(readFileSync('excludes.json', 'utf8'));
-  
+
   if (excludes.length) {
     rppIds = rppIds.filter((id) => !excludes.includes(id));
   }
@@ -59,8 +59,8 @@ try {
 const scenarios = rppIds.slice(0, 20)
   .map((rppId) => ({
     label: `Enhanced Article ${rppId}`,
-    url: `https://staging--epp.elifesciences.org/reviewed-preprints/${rppId}`,
-    referenceUrl: `https://prod--epp.elifesciences.org/reviewed-preprints/${rppId}`,
+    url: `https://prod-automation--epp.elifesciences.org/reviewed-preprints/${rppId}`,
+    referenceUrl: `https://migration-test--epp.elifesciences.org/reviewed-preprints/${rppId}`,
     removeSelectors: ["#CybotCookiebotDialog", "#assessment>.descriptors"]
   }));
 

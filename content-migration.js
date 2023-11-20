@@ -3,7 +3,9 @@ const { readFileSync } = require('fs');
 
 const offset = process.env.MIGRATION_OFFSET ? parseInt(process.env.MIGRATION_OFFSET) : 0;
 const checks = process.env.MIGRATION_CHECKS ? parseInt(process.env.MIGRATION_CHECKS) : 20;
+const removeSelectors = process.env.MIGRATION_REMOVE_SELECTORS ? process.env.MIGRATION_REMOVE_SELECTORS.split(',') : [];
 const report = process.env.MIGRATION_REPORT ? process.env.MIGRATION_REPORT.split(',') : ['browser'];
+const reportPathRoot = process.env.MIGRATION_REPORT_PATH ? process.env.MIGRATION_REPORT_PATH : 'backstop_data';
 
 const config = {
   id: 'enhanced_article',
@@ -18,11 +20,12 @@ const config = {
   // onReadyScript: 'playwright/onReady.js',
   scenarios: [],
   paths: {
-    bitmaps_reference: `backstop_data/${offset}-${checks}/bitmaps_reference`,
-    bitmaps_test: `backstop_data/${offset}-${checks}/bitmaps_test`,
-    engine_scripts: `backstop_data/${offset}-${checks}/engine_scripts`,
-    html_report: `backstop_data/${offset}-${checks}/html_report`,
-    ci_report: `backstop_data/${offset}-${checks}/ci_report`,
+    bitmaps_reference: `${reportPathRoot}/bitmaps_reference`,
+    bitmaps_test: `${reportPathRoot}/bitmaps_test`,
+    engine_scripts: `${reportPathRoot}/engine_scripts`,
+    html_report: `${reportPathRoot}/html_report`,
+    json_report: `${reportPathRoot}/json_report`,
+    ci_report: `${reportPathRoot}/ci_report`,
   },
   report: report,
   engine: 'playwright',
@@ -66,14 +69,15 @@ const scenarios = rppIds.slice(offset, offset + checks)
     label: `Enhanced Article ${rppId}`,
     url: `https://prod-automation--epp.elifesciences.org/reviewed-preprints/${rppId}`,
     referenceUrl: `https://migration-test--epp.elifesciences.org/reviewed-preprints/${rppId}`,
-    removeSelectors: [
+    removeSelectors: [...[
       "#CybotCookiebotDialog",
       "#assessment>.descriptors",
       "img", // removing images because of lazy load issue
       ".article-flag-list", // consider generating a report to surface differences between subject area order and list (https://migration-test--epp.elifesciences.org/reviewed-preprints/84141v1 https://prod-automation--epp.elifesciences.org/reviewed-preprints/84141v1)
       "aside", // consider generating a report to surface date differences between migration-test and prod-automation (sent for peer review different https://migration-test--epp.elifesciences.org/reviewed-preprints/80494 https://prod-automation--epp.elifesciences.org/reviewed-preprints/80494)
       // ".author-list__orcids", // REGRESSION content difference - 80494 orcids don't appear in prod-automation article and author information (https://prod-automation--epp.elifesciences.org/reviewed-preprints/80494#author-list)
-    ],
+    ], ...removeSelectors],
+    delay: 1000,
   }));
 
 config.scenarios = scenarios;

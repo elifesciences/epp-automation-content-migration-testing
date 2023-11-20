@@ -2,3 +2,4 @@ node_modules/
 manuscripts.json
 excludes.json
 backstop_data/
+backstop_data_run/

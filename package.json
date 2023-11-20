@@ -9,6 +9,7 @@
   "scripts": {
     "content-status": "node content-status.js",
     "docmap-status": "node docmap-status.js",
+    "content-migration-run": "node content-migration-run.js",
     "generate-reference": "backstop reference --config=content-migration.js",
     "run-test": "backstop test --config=content-migration.js"
   }

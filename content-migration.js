@@ -1,31 +1,35 @@
 const syncFetch = require('sync-fetch');
 const { readFileSync } = require('fs');
 
+const offset = process.env.MIGRATION_OFFSET ? parseInt(process.env.MIGRATION_OFFSET) : 0;
+const checks = process.env.MIGRATION_CHECKS ? parseInt(process.env.MIGRATION_CHECKS) : 20;
+const report = process.env.MIGRATION_REPORT ? process.env.MIGRATION_REPORT.split(',') : ['browser'];
+
 const config = {
   id: 'enhanced_article',
   viewports: [
     {
       label: 'desktop',
       width: 1440,
-      height: 900
-    }
+      height: 900,
+    },
   ],
   // onBeforeScript: 'playwright/onBefore.js',
   // onReadyScript: 'playwright/onReady.js',
   scenarios: [],
   paths: {
-    bitmaps_reference: 'backstop_data/bitmaps_reference',
-    bitmaps_test: 'backstop_data/bitmaps_test',
-    engine_scripts: 'backstop_data/engine_scripts',
-    html_report: 'backstop_data/html_report',
-    ci_report: 'backstop_data/ci_report'
+    bitmaps_reference: `backstop_data/${offset}-${checks}/bitmaps_reference`,
+    bitmaps_test: `backstop_data/${offset}-${checks}/bitmaps_test`,
+    engine_scripts: `backstop_data/${offset}-${checks}/engine_scripts`,
+    html_report: `backstop_data/${offset}-${checks}/html_report`,
+    ci_report: `backstop_data/${offset}-${checks}/ci_report`,
   },
-  report: ['browser'],
+  report: report,
   engine: 'playwright',
   engineOptions: {
     browser: 'chromium',
     gotoParameters: { waitUntil: 'networkidle0' },
-    args: ['--no-sandbox']
+    args: ['--no-sandbox'],
   },
   asyncCaptureLimit: 5,
   asyncCompareLimit: 50,
@@ -57,7 +61,7 @@ try {
   console.log('no excludes found');
 }
 
-const scenarios = rppIds.slice(0, 20)
+const scenarios = rppIds.slice(offset, offset + checks)
   .map((rppId) => ({
     label: `Enhanced Article ${rppId}`,
     url: `https://prod-automation--epp.elifesciences.org/reviewed-preprints/${rppId}`,
@@ -69,7 +73,7 @@ const scenarios = rppIds.slice(0, 20)
       ".article-flag-list", // consider generating a report to surface differences between subject area order and list (https://migration-test--epp.elifesciences.org/reviewed-preprints/84141v1 https://prod-automation--epp.elifesciences.org/reviewed-preprints/84141v1)
       "aside", // consider generating a report to surface date differences between migration-test and prod-automation (sent for peer review different https://migration-test--epp.elifesciences.org/reviewed-preprints/80494 https://prod-automation--epp.elifesciences.org/reviewed-preprints/80494)
       // ".author-list__orcids", // REGRESSION content difference - 80494 orcids don't appear in prod-automation article and author information (https://prod-automation--epp.elifesciences.org/reviewed-preprints/80494#author-list)
-    ]
+    ],
   }));
 
 config.scenarios = scenarios;

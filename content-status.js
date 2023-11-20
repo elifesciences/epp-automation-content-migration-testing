@@ -55,7 +55,7 @@ function chunkArray(array, size) {
   return chunked;
 }
 
-// Chunk rppIds into batches of 20
+// Chunk rppIds into batches of 10
 const batches = chunkArray(rppIds, 10);
 
 // Process each batch

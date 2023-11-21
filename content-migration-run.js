@@ -53,7 +53,7 @@ for (let i = 0; i < batches; i++) {
   // Set environment variables
   process.env.MIGRATION_OFFSET = (i * batchSize).toString();
   process.env.MIGRATION_CHECKS = (batchSize).toString();
-  process.env.MIGRATION_REMOVE_SELECTORS = '.author-list__orcids';
+  process.env.MIGRATION_REMOVE_SELECTORS = '.author-list__orcids,#copyright';
   process.env.MIGRATION_REPORT = 'json';
   process.env.MIGRATION_REPORT_PATH = `${batchesFolder}/${i + 1}-of-${batches}`;
 

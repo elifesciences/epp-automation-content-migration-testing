@@ -70,12 +70,13 @@ const scenarios = rppIds.slice(offset, offset + checks)
     url: `https://prod-automation--epp.elifesciences.org/reviewed-preprints/${rppId}`,
     referenceUrl: `https://migration-test--epp.elifesciences.org/reviewed-preprints/${rppId}`,
     removeSelectors: [...[
-      "#CybotCookiebotDialog",
-      "#assessment>.descriptors",
-      "img", // removing images because of lazy load issue
-      ".article-flag-list", // consider generating a report to surface differences between subject area order and list (https://migration-test--epp.elifesciences.org/reviewed-preprints/84141v1 https://prod-automation--epp.elifesciences.org/reviewed-preprints/84141v1)
-      "aside", // consider generating a report to surface date differences between migration-test and prod-automation (sent for peer review different https://migration-test--epp.elifesciences.org/reviewed-preprints/80494 https://prod-automation--epp.elifesciences.org/reviewed-preprints/80494)
-      // ".author-list__orcids", // REGRESSION content difference - 80494 orcids don't appear in prod-automation article and author information (https://prod-automation--epp.elifesciences.org/reviewed-preprints/80494#author-list)
+      '#CybotCookiebotDialog',
+      '#assessment>.descriptors',
+      'img', // removing images because of lazy load issue
+      '.article-flag-list', // consider generating a report to surface differences between subject area order and list (https://migration-test--epp.elifesciences.org/reviewed-preprints/84141v1 https://prod-automation--epp.elifesciences.org/reviewed-preprints/84141v1)
+      '#copyright', // different approach taken in automated setup (acceptable difference)
+      'aside', // consider generating a report to surface date differences between migration-test and prod-automation (sent for peer review different https://migration-test--epp.elifesciences.org/reviewed-preprints/80494 https://prod-automation--epp.elifesciences.org/reviewed-preprints/80494)
+      // '.author-list__orcids', // REGRESSION content difference - 80494 orcids don't appear in prod-automation article and author information (https://prod-automation--epp.elifesciences.org/reviewed-preprints/80494#author-list)
     ], ...removeSelectors],
     delay: 1000,
   }));

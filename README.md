@@ -25,8 +25,10 @@ yarn content-migration-run
 After the above is run you can check to see how many have passed and failed and then dig into the batch reports:
 
 ```shell
-for file in $(ls ./backstop_data_run/**/**/jsonReport.json | sort -V); do fail_count=$(jq '[.tests[] | select(.status == "fail")] | length' "$file"); pass_count=$(jq '[.tests[] | select(.status == "pass")] | length' "$file"); match=$(echo "$file" | grep -oP '\d+-of-\d+' | head -n 1); echo "$match: $pass_count passes, $fail_count fails"; done
+for file in $(ls ./backstop_data_run/**/**/jsonReport.json | sort -V); do fail_count=$(jq '[.tests[] | select((.pair.diff.rawMisMatchPercentage // 0) > 0)] | length' "$file"); pass_count=$(jq '[.tests[] | select((.pair.diff.rawMisMatchPercentage // 0) == 0)] | length' "$file"); fail_no_diff=$(jq '[.tests[] | select(.status == "fail" and (.pair.diff.rawMisMatchPercentage // 0) == 0)] | length' "$file"); match=$(echo "$file" | grep -oP '\d+-of-\d+' | head -n 1); echo "$match: $pass_count passes, $fail_count fails, $fail_no_diff false fails"; done
 ```
+
+If `status` is fail but no difference has been detected then we consider this to be a pass but indicate it as a "false fail".
 
 To reduce the feedback loop and if you want to focus on specific manuscripts then you can create a manuscripts.json file in the root of this project. See this example:
 

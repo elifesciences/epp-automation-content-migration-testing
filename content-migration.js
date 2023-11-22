@@ -45,7 +45,8 @@ const fetchAndParseManuscripts = () => {
   try {
     return JSON.parse(readFileSync('manuscripts.json', 'utf8'))['manuscripts'];
   } catch (err) {
-    const manuscriptsJson = syncFetch('https://raw.githubusercontent.com/elifesciences/enhanced-preprints-client/master/manuscripts.json');
+    const manuscriptsJsonUrl = process.env.MANUSCRIPTS_JSON || 'https://raw.githubusercontent.com/elifesciences/enhanced-preprints-client/master/manuscripts.json';
+    const manuscriptsJson = syncFetch(manuscriptsJsonUrl);
     return manuscriptsJson.json()['manuscripts'];
   }
 }

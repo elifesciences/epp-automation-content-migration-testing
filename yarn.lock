@@ -675,6 +675,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"dotenv@npm:^16.3.1":
+  version: 16.3.1
+  resolution: "dotenv@npm:16.3.1"
+  checksum: b95ff1bbe624ead85a3cd70dbd827e8e06d5f05f716f2d0cbc476532d54c7c9469c3bc4dd93ea519f6ad711cb522c00ac9a62b6eb340d5affae8008facc3fbd7
+  languageName: node
+  linkType: hard
+
 "eastasianwidth@npm:^0.2.0":
   version: 0.2.0
   resolution: "eastasianwidth@npm:0.2.0"
@@ -2091,6 +2098,7 @@ __metadata:
   resolution: "root-workspace-0b6124@workspace:."
   dependencies:
     backstopjs: "npm:^6.2.2"
+    dotenv: "npm:^16.3.1"
     fs: "npm:^0.0.1-security"
     playwright: "npm:^1.39.0"
     sync-fetch: "npm:^0.5.2"

@@ -53,15 +53,15 @@ yarn content-status
 - Visit Data Hub DocMaps API in lookerstudio.google.com
 - Expand menu:
 
-![Expand menu](/home/nlisgo/elife/projects/epp/epp-automation-content-migration-testing/README-files/docmap-mecas-1.png)
+![Expand menu](/README-files/docmap-mecas-1.png)
 
 - Choose export:
 
-![Choose export](/home/nlisgo/elife/projects/epp/epp-automation-content-migration-testing/README-files/docmap-mecas-2.png)
+![Choose export](/README-files/docmap-mecas-2.png)
 
 - Rename to `docmap-mecas.csv` and confirm export:
 
-![Rename and confirm export](/home/nlisgo/elife/projects/epp/epp-automation-content-migration-testing/README-files/docmap-mecas-3.png)
+![Rename and confirm export](/README-files/docmap-mecas-3.png)
 
 - Move downloaded `docmap-mecas.csv` to root of this repo
 - You will need to repeat this step to compare against the latest values in DataHub

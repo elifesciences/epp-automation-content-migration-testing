@@ -10,6 +10,7 @@
   "scripts": {
     "content-status": "node content-status.js",
     "docmap-status": "node docmap-status.js",
+    "meca-status": "bash meca-status-all.sh",
     "content-migration-run": "node content-migration-run.js",
     "content-migration-run-review": "bash content-migration-run-review.sh",
     "generate-reference": "backstop reference --config=content-migration.js",

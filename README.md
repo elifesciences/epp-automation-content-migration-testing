@@ -1,4 +1,4 @@
-# Description
+### Instructions for Backstop visual comparison checks
 
 This is a one off script to compare content between two deployed versions of EPP after content ingestion has been automated.
 
@@ -28,8 +28,6 @@ After the above is run you can check to see how many have passed and failed and 
 for file in $(ls ./backstop_data_run/**/**/jsonReport.json | sort -V); do fail_count=$(jq '[.tests[] | select((.pair.diff.rawMisMatchPercentage // 0) > 0)] | length' "$file"); pass_count=$(jq '[.tests[] | select((.pair.diff.rawMisMatchPercentage // 0) == 0)] | length' "$file"); fail_no_diff=$(jq '[.tests[] | select(.status == "fail" and (.pair.diff.rawMisMatchPercentage // 0) == 0)] | length' "$file"); match=$(echo "$file" | grep -oP '\d+-of-\d+' | head -n 1); echo "$match: $pass_count passes, $fail_count fails, $fail_no_diff false fails"; done
 ```
 
-If `status` is fail but no difference has been detected then we consider this to be a pass but indicate it as a "false fail".
-
 To reduce the feedback loop and if you want to focus on specific manuscripts then you can create a manuscripts.json file in the root of this project. See this example:
 
 ```json
@@ -40,8 +38,69 @@ To reduce the feedback loop and if you want to focus on specific manuscripts the
 }
 ```
 
+### Instructions to verify all content is published
+
 To simply monitor whether the expected manuscripts are available without performing a visual comparison:
 
 ```shell
 yarn content-status
 ```
+
+### Instructions to verify that correct meca files are used
+
+#### Step 1. Download csv from Data Hub DocMaps API
+
+- Visit Data Hub DocMaps API in lookerstudio.google.com
+- Expand menu:
+
+![Expand menu](/home/nlisgo/elife/projects/epp/epp-automation-content-migration-testing/README-files/docmap-mecas-1.png)
+
+- Choose export:
+
+![Choose export](/home/nlisgo/elife/projects/epp/epp-automation-content-migration-testing/README-files/docmap-mecas-2.png)
+
+- Rename to `docmap-mecas.csv` and confirm export:
+
+![Rename and confirm export](/home/nlisgo/elife/projects/epp/epp-automation-content-migration-testing/README-files/docmap-mecas-3.png)
+
+- Move downloaded `docmap-mecas.csv` to root of this repo
+- You will need to repeat this step to compare against the latest values in DataHub
+
+#### Step 2. Run the script
+- Run `yarn meca-status > meca-status.txt`
+- You can monitor progress with `tail -f meca-status.txt`
+
+#### Step 3. Evaluate results
+- To see how many meca's match in docmaps and enhanced-preprints-data:
+
+```shell
+cat meca-status.txt | grep -E ',match,'
+cat meca-status.txt | grep -E ',match,' | wc -l
+```
+
+- To see how many meca's are different in docmaps to enhanced-preprints-data:
+
+Published only:
+```shell
+cat meca-status.txt | grep -E ',published,.+,different,'
+cat meca-status.txt | grep -E ',published,.+,different,' | wc -l
+```
+
+All:
+```shell
+cat meca-status.txt | grep -E ',different,'
+cat meca-status.txt | grep -E ',different,' | wc -l
+```
+
+- To see how many meca's are missing in Docmaps:
+
+Published only:
+```shell
+cat meca-status.txt | grep -E ',published,.+,missing,'
+cat meca-status.txt | grep -E ',published,.+,missing,' | wc -l
+```
+
+All:
+```shell
+cat meca-status.txt | grep -E ',missing,'
+cat meca-status.txt | grep -E ',missing,' | wc -l

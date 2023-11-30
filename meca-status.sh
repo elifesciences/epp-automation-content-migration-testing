@@ -29,9 +29,9 @@ if [[ $source == "biorxiv" ]]; then
 
     # Check if uuid is found in meca path
     if echo "${rp_array[8]}" | grep -Fq "/$uuid."; then
-      match="true"
+      match="match"
     else
-      match="false"
+      match="different"
     fi
 
     biorxiv="https://api.biorxiv.org/meca_index/elife/${rp_array[3]}"

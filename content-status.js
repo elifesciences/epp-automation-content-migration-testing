@@ -43,7 +43,7 @@ const checkContent = (msid, version) => {
 }
 
 const manuscripts = fetchAndParseManuscripts();
-const rppIds = Object.keys(manuscripts);
+const rppIds = Object.keys(manuscripts).filter((rppId) => rppId.indexOf('v') > 0);
 
 // Function to chunk an array into smaller arrays of a specified size
 function chunkArray(array, size) {
@@ -62,7 +62,7 @@ const batches = chunkArray(rppIds, 10);
 // Process each batch
 batches.forEach((batch, i) => {
   const scenarios = batch
-    .map((rppId) =>( { id: rppId, published: checkPublished(rppId), content: checkContent(rppId.match(/^\d+/)[0], rppId.includes('v') ? Number(rppId.match(/\d$/)[0]) : 0), ...checkSections(`https://prod-automation--epp.elifesciences.org/reviewed-preprints/${rppId}`) }));
+    .map((rppId) =>( { id: rppId, ...checkSections(`https://prod-automation--epp.elifesciences.org/reviewed-preprints/${rppId}`) }));
 
   const organise = () => {
     const ok = scenarios.filter((scenario) => scenario.results.every((result) => result.result));

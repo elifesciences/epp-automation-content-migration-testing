@@ -40,6 +40,6 @@ const msidsOnlyInSemiAutomated = semiAutomatedSnippetsMsids.filter((msid) => !au
 const msidsOnlyInAutomated = automatedSnippetsMsids.filter((msid) => !semiAutomatedSnippetsMsids.includes(msid));
 const msidsInBoth = semiAutomatedSnippetsMsids.filter((msid) => automatedSnippetsMsids.includes(msid));
 
-console.log(`msidsInBoth: (${msidsInBoth.length})`);
-console.log(`msidsOnlyInSemiAutomated (${msidsOnlyInSemiAutomated.length}): ${msidsOnlyInSemiAutomated.join(',')}`);
-console.log(`msidsOnlyInAutomated (${msidsOnlyInAutomated.length}): ${msidsOnlyInAutomated.join(',')}`);
+console.log(`msidsInBoth (${msidsInBoth.length})`);
+console.log(`msidsOnlyInSemiAutomated (${msidsOnlyInSemiAutomated.length}) ${msidsOnlyInSemiAutomated.join(',')}`);
+console.log(`msidsOnlyInAutomated (${msidsOnlyInAutomated.length}) ${msidsOnlyInAutomated.join(',')}`);

@@ -91,4 +91,4 @@ console.log(`msidsOnlyInSemiAutomated (${msidsOnlyInSemiAutomated.length}) ${msi
 console.log(`msidsOnlyInAutomated (${msidsOnlyInAutomated.length}) ${msidsOnlyInAutomated.join(',')}`);
 console.log(`msidsInBoth (${msidsInBoth.length})`);
 
-console.log(`different (${different.length} of ${msidsInBoth.length}): ${different.map(({ id }) => id).join(',')}`);
+console.log(`different (${different.length} of ${msidsInBoth.length}) ${different.map(({ id }) => id).join(',')}`);

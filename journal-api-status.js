@@ -23,7 +23,8 @@ const prepareSnippetForComparison = ({
   subjects: subjects.sort((a, b) => a.id.localeCompare(b.id)),
   published: new Date(published).toLocaleDateString('en-GB'),
   statusDate: new Date(statusDate).toLocaleDateString('en-GB'),
-  ...(pdf ? { pdf } : {}),
+  // pdf not yet available in automated listings
+  // ...(pdf ? { pdf } : {}),
 });
 
 const fetchSnippets = (url, page, perPage) => {
@@ -39,7 +40,7 @@ const automatedSnippets = [];
 
 let page = 1;
 console.log(`Collecting semi-automated snippets (${semiAutomatedTotal})`);
-while (semiAutomatedSnippets.length < 50) {
+while (semiAutomatedSnippets.length < semiAutomatedTotal) {
   console.log(`gathering page ${page} of ${Math.ceil(semiAutomatedTotal / batchSize)}`);
   semiAutomatedSnippets.push(...fetchSnippets(semiAutomatedUrl, page, batchSize)['items'].map((snippet) => prepareSnippetForComparison(snippet)));
   page++;
@@ -48,7 +49,7 @@ console.log(`Completed collection of semi-automated snippets!`);
 
 page = 1;
 console.log(`Collecting automated snippets (${automatedTotal})`);
-while (automatedSnippets.length < 50) {
+while (automatedSnippets.length < automatedTotal) {
   console.log(`gathering page ${page} of ${Math.ceil(automatedTotal / batchSize)}`);
   automatedSnippets.push(...fetchSnippets(automatedUrl, page, batchSize)['items'].map((snippet) => prepareSnippetForComparison(snippet)));
   page++;

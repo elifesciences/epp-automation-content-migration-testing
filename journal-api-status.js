@@ -28,8 +28,8 @@ const fetchSnippets = (url, page, perPage) => {
   return results.json();
 };
 
-const semiAutomatedTotal = parseInt(fetchSnippets(semiAutomatedUrl, 1)['total'], 10);
-const automatedTotal = parseInt(fetchSnippets(automatedUrl, 1)['total'], 10);
+const semiAutomatedTotal = parseInt(fetchSnippets(semiAutomatedUrl, 1, 1)['total'], 10);
+const automatedTotal = parseInt(fetchSnippets(automatedUrl, 1, 1)['total'], 10);
 
 const semiAutomatedSnippets = [];
 const automatedSnippets = [];
@@ -88,3 +88,8 @@ console.log(`msidsOnlyInAutomated (${msidsOnlyInAutomated.length}) ${msidsOnlyIn
 console.log(`msidsInBoth (${msidsInBoth.length})`);
 
 console.log(`different (${different.length} of ${msidsInBoth.length}) ${different.map(({ id }) => id).join(',')}`);
+different.forEach((item) => {
+  console.log(`differences found in ${item.id}:`);
+  console.log(`Semi automated: ${JSON.stringify(item.semiAutomated, undefined, '  ')}`);
+  console.log(`Automated: ${JSON.stringify(item.automated, undefined, '  ')}`);
+});

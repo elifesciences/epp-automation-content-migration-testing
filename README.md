@@ -104,6 +104,7 @@ All:
 ```shell
 cat meca-status.txt | grep -E ',missing,'
 cat meca-status.txt | grep -E ',missing,' | wc -l
+```
 
 ### Instructions to verify status of automated instance of Journal API
 

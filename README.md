@@ -104,3 +104,11 @@ All:
 ```shell
 cat meca-status.txt | grep -E ',missing,'
 cat meca-status.txt | grep -E ',missing,' | wc -l
+
+### Instructions to verify status of automated instance of Journal API
+
+To monitor whether the reviewed-preprints API that serves Journal is displays all expected results:
+
+```shell
+yarn journal-api-status
+```

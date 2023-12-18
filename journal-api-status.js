@@ -12,8 +12,6 @@ const prepareSnippetForComparison = ({
   authorLine,
   title,
   subjects,
-  published,
-  statusDate,
   pdf,
 }) => ({
   id,
@@ -21,8 +19,6 @@ const prepareSnippetForComparison = ({
   authorLine,
   title,
   subjects: subjects.sort((a, b) => a.id.localeCompare(b.id)),
-  published: new Date(published).toLocaleDateString('en-GB'),
-  statusDate: new Date(statusDate).toLocaleDateString('en-GB'),
   // pdf not yet available in automated listings
   // ...(pdf ? { pdf } : {}),
 });

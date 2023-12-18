@@ -76,5 +76,8 @@ batches.forEach((batch, i) => {
     }
   };
 
-  console.log(`Batch ${i + 1} of ${batches.length}:`, JSON.stringify(organise(), null, 2));
+  console.log(JSON.stringify({
+    batch: `${i + 1} of ${batches.length}`,
+    ...organise()
+  }, null, 2));
 });

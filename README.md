@@ -46,6 +46,17 @@ To simply monitor whether the expected manuscripts are available without perform
 yarn content-status
 ```
 
+This process can take a while, so it is best output to a file and analysed afterwards:
+
+```shell
+yarn content-status > content-status.txt
+```
+
+Then finding all the URLs for the failed entries using the output file and `jq`
+```
+jq '.log|select(.|length>0)[].path' content-status.txt
+```
+
 ### Instructions to verify that correct meca files are used
 
 #### Step 1. Download csv from Data Hub DocMaps API

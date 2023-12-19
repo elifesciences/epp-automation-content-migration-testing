@@ -78,6 +78,8 @@ jq '.log|select(.|length>0)[].path' content-status.txt
 - You will need to repeat this step to compare against the latest values in DataHub
 
 #### Step 2. Run the script
+If you want to run this on a subset of manuscripts then make sure manuscripts.json file is in the root of this repo or otherwise remove it.
+
 - Run `yarn meca-status > meca-status.txt`
 - You can monitor progress with `tail -f meca-status.txt`
 

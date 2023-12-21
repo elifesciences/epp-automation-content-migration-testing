@@ -12,8 +12,33 @@ const fetchAndParseManuscripts = () => {
 }
 
 const check = async (url) => {
-  const response = await fetch(url);
-  return response.ok;
+  try {
+    const controller = new AbortController();
+    setTimeout(() => {
+      controller.abort();
+    }, 10000);
+
+    const response = await fetch(url, {signal: controller.signal});
+    return response.ok;
+  } catch (error) {
+    try {
+      const controller = new AbortController();
+      setTimeout(() => {
+        controller.abort();
+      }, 30000);
+
+      const response = await fetch(url, {signal: controller.signal});
+      return response.ok;
+    } catch (error) {
+      const controller = new AbortController();
+      setTimeout(() => {
+        controller.abort();
+      }, 60000);
+
+      const response = await fetch(url, {signal: controller.signal});
+      return response.ok;
+    }
+  }
 };
 
 const checkSections = async (url) => ({

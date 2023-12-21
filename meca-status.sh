@@ -3,6 +3,17 @@ set -e
 
 # ./meca-status.sh id uuid [version] [source] [datahub_docmap_csv]
 
+# Check if we need to run with ggrep
+grep_cli=grep
+if ! grep --version | grep 'GNU grep'; then
+  if type ggrep; then
+    grep_cli=ggrep
+  else
+    echo "Couldn't find GNU grep on either grep or ggrep. If running on macos, run brew install grep"
+    exit 1
+  fi
+fi
+
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 
 id=$1
@@ -11,7 +22,7 @@ version="${3-1}" # default 1
 source="${4-biorxiv}" # default biorxiv
 datahub_docmap_csv="$(realpath ${5-${SCRIPT_DIR}/docmap-mecas.csv})" # default ./docmap-mecas.csv
 
-rp_line=$(grep -m 1 "^${id},${version}," ${datahub_docmap_csv} || true)
+rp_line=$($grep_cli -m 1 "^${id},${version}," ${datahub_docmap_csv} || true)
 
 # Split rp_line into an array
 IFS=',' read -ra rp_array <<< "$rp_line"
@@ -28,7 +39,7 @@ if [[ $source == "biorxiv" ]]; then
     datahub_uuid="${filename%.*}"
 
     # Check if uuid is found in meca path
-    if echo "${rp_array[8]}" | grep -Fq "/$uuid."; then
+    if echo "${rp_array[8]}" | $grep_cli -Fq "/$uuid."; then
       match="match"
     else
       match="different"

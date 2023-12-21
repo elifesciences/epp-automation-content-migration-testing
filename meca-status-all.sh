@@ -3,6 +3,17 @@ set -e
 
 # ./meca-status-all.sh [datahub_docmap_csv] [manuscripts.json]
 
+# Check if we need to run with ggrep
+grep_cli=grep
+if ! grep --version | grep 'GNU grep'; then
+  if type ggrep; then
+    grep_cli=ggrep
+  else
+    echo "Couldn't find GNU grep on either grep or ggrep. If running on macos, run brew install grep"
+    exit 1
+  fi
+fi
+
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 
 datahub_docmap_csv="$(realpath ${1-${SCRIPT_DIR}/docmap-mecas.csv})" # default ./docmap-mecas.csv
@@ -41,9 +52,9 @@ for path in "${paths[@]}"; do
     source="non-biorxiv"
   fi
 
-  id=$(echo $path | grep -oP '[0-9]+/v[0-9]+' | tr -d '/')
+  id=$(echo $path | $grep_cli -oP '[0-9]+/v[0-9]+' | tr -d '/')
 
-  if echo "$manuscripts_json" | grep -q "\"${id}\":"; then
+  if echo "$manuscripts_json" | $grep_cli -q "\"${id}\":"; then
     published="published"
   else
     published="preview"

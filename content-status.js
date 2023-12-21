@@ -11,18 +11,18 @@ const fetchAndParseManuscripts = () => {
   }
 }
 
-const check = (url) => {
-  const response = syncFetch(url);
+const check = async (url) => {
+  const response = await fetch(url);
   return response.ok;
 };
 
-const checkSections = (url) => ({
+const checkSections = async (url) => ({
   path: url,
-  results: ['', '/figures', '/reviews']
-    .map((sub) => ({
+  results: await Promise.all(['', '/figures', '/reviews']
+    .map(async (sub) => ({
       subpath: sub,
-      result: check(`${url}${sub}`),
-    })),
+      result: await check(`${url}${sub}`),
+    }))),
 });
 
 const checkPublished = (rppId) => {
@@ -60,24 +60,28 @@ function chunkArray(array, size) {
 const batches = chunkArray(rppIds, 10);
 
 // Process each batch
+let lastPromise = new Promise((resolve) => { resolve(true); });
 batches.forEach((batch, i) => {
-  const scenarios = batch
-    .map((rppId) =>( { id: rppId, ...checkSections(`https://prod-automation--epp.elifesciences.org/reviewed-preprints/${rppId}`) }));
+  lastPromise = lastPromise.then(async () => {
+    const scenarios = await Promise.all(batch
+      .map(async (rppId) => ({ id: rppId, ...(await checkSections(`https://prod-automation--epp.elifesciences.org/reviewed-preprints/${rppId}`)) })));
 
-  const organise = () => {
-    const ok = scenarios.filter((scenario) => scenario.results.every((result) => result.result));
-    const error = scenarios.filter((scenario) => scenario.results.some((result) => !result.result));
+    const organise = () => {
+      const ok = scenarios.filter((scenario) => scenario.results.every((result) => result.result));
+      const error = scenarios.filter((scenario) => scenario.results.some((result) => !result.result));
 
-    return {
-      ok: ok.length,
-      success: ok.map((i) => i.id).join(','),
-      error: error.length,
-      log: error,
-    }
-  };
-
-  console.log(JSON.stringify({
-    batch: `${i + 1} of ${batches.length}`,
-    ...organise()
-  }, null, 2));
+      return {
+        ok: ok.length,
+        success: ok.map((i) => i.id).join(','),
+        error: error.length,
+        log: error,
+      }
+    };
+    const result = {
+      batch: `${i + 1} of ${batches.length}`,
+      ...organise()
+    };
+    console.log(JSON.stringify(result, null, 2));
+    return result;
+  });
 });

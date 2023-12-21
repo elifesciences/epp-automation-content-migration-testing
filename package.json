@@ -3,6 +3,7 @@
     "backstopjs": "^6.2.2",
     "dotenv": "^16.3.1",
     "fs": "^0.0.1-security",
+    "node-fetch": "2",
     "playwright": "^1.39.0",
     "sync-fetch": "^0.5.2"
   },

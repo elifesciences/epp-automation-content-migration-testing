@@ -1,6 +1,8 @@
 const syncFetch = require('sync-fetch');
 const { readFileSync } = require('fs');
 
+const fetch = require('node-fetch');
+
 const fetchAndParseManuscripts = () => {
   try {
     return JSON.parse(readFileSync('manuscripts.json', 'utf8'))['manuscripts'];

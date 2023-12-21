@@ -12,7 +12,12 @@ const fetchAndParseManuscripts = () => {
 }
 
 const check = async (url) => {
-  const response = await fetch(url);
+  const controller = new AbortController();
+  const timeout = setTimeout(() => {
+    controller.abort();
+  }, 30000);
+
+  const response = await fetch(url, {signal: controller.signal});
   return response.ok;
 };
 
